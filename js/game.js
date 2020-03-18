@@ -48,8 +48,8 @@ function buildBoard(size = 4, virusesCnt = 2) {
 }
 
 function renderBoard(board) {
-  var strHTML = '';
-  const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  var elBoard = document.querySelector('.board-container');
+  var vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   var width = 0;
   var height = 0;
   switch (gSize) {
@@ -66,13 +66,13 @@ function renderBoard(board) {
   }
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board[0].length; j++) {
-      var className = `cell cell-${i}-${j}`;
-      strHTML +=
-      `<div class="${className}" style="width:${width};height:${height}"></div>`;
+      var elCell = document.createElement('div');
+      elCell.classList.add('cell', `cell-${i}-${j}`);
+      elCell.style.width = width;
+      elCell.style.height = height;
+      elBoard.appendChild(elCell);
     }
   }
-  var elBoard = document.querySelector('.board-container');
-  elBoard.innerHTML = strHTML;
 }
 
 // eslint-disable-next-line no-unused-vars
