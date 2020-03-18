@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mines Sweeper</title>
+  <title>Coronasweeper</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="initGame()">
+
+  <div class="container">
+    <h1>Coronasweeper</h1>
+      <button type="button" class="beginner" id="beginner" onclick="setLevel(this)">Beginner</button>
+      <button type="button" class="medium" id="medium" onclick="setLevel(this)">Medium</button>
+      <button type="button" class="expert" id="expert" onclick="setLevel(this)">Expert</button>
+    <table>
+      <tbody>
+
+      </tbody>
+    </table>
+  </div>
   
   <script src="js/utils.js"></script>
   <script src="js/game.js"></script>
