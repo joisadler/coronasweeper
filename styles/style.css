@@ -82,8 +82,11 @@ button:active, button:focus {
   width: 24%;
   height: calc((100vw * .3) * 0.24);
   border: 1px solid black;
-  color: gray;
+  background-color: silver;
+  color: blue;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-size: contain;
+  font-size: 2em;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable no-continue */
 /* eslint-disable no-param-reassign */
 'use strict';
@@ -33,8 +34,8 @@ function buildBoard(size = 4, virusesCnt = 2) {
       };
     }
   }
-  // console.table(board);
 
+  // Infect random cells:
   // for (var k = virusesCnt; k > 0; k--) {
   //   var iIdx = getRandomIntInclusive(0, size - 1);
   //   var jIdx = getRandomIntInclusive(0, size - 1);
@@ -45,6 +46,44 @@ function buildBoard(size = 4, virusesCnt = 2) {
   board[1][1].isVirus = true;
   board[3][3].isVirus = true;
   return board;
+}
+
+function showGameOver(i, j) {
+  var infectedCells = document.querySelectorAll('.infected');
+  infectedCells.forEach(function (cell) {
+    cell.style.backgroundImage = 'url("img/corona.png")';
+  });
+  var elCurrentInfectedCell = document.querySelector(`.cell-${i}-${j}`);
+  elCurrentInfectedCell.style.backgroundColor = 'red';
+}
+
+function revealCell(i, j, num) {
+  var elCell = document.querySelector(`.cell-${i}-${j}`);
+  elCell.innerText = num > 0 ? num : '';
+}
+
+function cellClicked(elCell, i, j) {
+  var cell = gBoard[i][j];
+  if (!cell.isShown && !cell.isMarked) {
+    cell.isShown = true;
+    if (!cell.isVirus) {
+      revealCell(i, j, cell.virusesAroundCount);
+      return;
+    }
+    showGameOver(i, j);
+  }
+}
+
+function cellMarked(elCell) {
+  // Todo:
+  // Called on right click to mark a
+  // cell (suspected to be a mine)
+  // Search the web (and
+  // implement) how to hide the
+  // context menu on right click
+
+  // Right click to flag/unflag a suspected cell (you cannot reveal a
+  //   flagged cell)
 }
 
 function renderBoard(board) {
@@ -64,12 +103,23 @@ function renderBoard(board) {
       width = height = `${vw * 0.3 * 0.075}px`;
       break;
   }
-  for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board[0].length; j++) {
+  for (let i = 0; i < gSize; i++) {
+    for (let j = 0; j < gSize; j++) {
       var elCell = document.createElement('div');
       elCell.classList.add('cell', `cell-${i}-${j}`);
+      if (gBoard[i][j].isVirus) {
+        elCell.classList.add('infected');
+      }
       elCell.style.width = width;
       elCell.style.height = height;
+      elCell.addEventListener('click', function () {
+        cellClicked(elCell, i, j);
+      });
+      elCell.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        cellMarked(elCell);
+        return false;
+      });
       elBoard.appendChild(elCell);
     }
   }
@@ -123,7 +173,6 @@ function setVirusesNegsCount(board) {
       }
     }
   }
-  console.table(board);
 }
 
 // eslint-disable-next-line no-unused-vars
