@@ -1,3 +1,5 @@
+/* eslint-disable no-continue */
+/* eslint-disable no-param-reassign */
 'use strict';
 
 // eslint-disable-next-line no-unused-vars
@@ -31,7 +33,9 @@ function buildBoard(size = 4, virusesCnt = 2) {
     var jIdx = getRandomIntInclusive(0, size - 1);
     board[iIdx][jIdx] = VIRUS;
   }
-  // console.table(board)
+  // Hardcoding:
+  // board[1][1] = VIRUS;
+  // board[3][3] = VIRUS;
   return board;
 }
 
@@ -57,8 +61,38 @@ function setLevel(button) {
   buildBoard(gSize, gViruses);
 }
 
+function isVirus(cellLocation) {
+  return gBoard[cellLocation.i][cellLocation.j] === VIRUS;
+}
+
+function getVirusesNegsCount(cellLocation) {
+  var cnt = 0;
+  for (let i = cellLocation.i - 1; i <= cellLocation.i + 1; i++) {
+    for (let j = cellLocation.j - 1; j <= cellLocation.j + 1; j++) {
+      if (i === cellLocation.i && j === cellLocation.j) continue;
+      if (i >= 0 && i < gSize && j >= 0 && j < gSize && isVirus({ i, j })) {
+        cnt++;
+      }
+    }
+  }
+  return cnt;
+}
+
+function setVirusesNegsCount(board) {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board.length; j++) {
+      if (board[i][j] !== VIRUS) {
+        var cnt = getVirusesNegsCount({ i, j });
+        board[i][j] = cnt > 0 ? cnt : EMPTY;
+      }
+    }
+  }
+  console.table(board);
+}
+
 // eslint-disable-next-line no-unused-vars
 function initGame() {
   gBoard = buildBoard();
+  setVirusesNegsCount(gBoard);
   // renderBoard(gBoard, '.board');
 }
