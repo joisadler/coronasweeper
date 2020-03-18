@@ -11,9 +11,6 @@ var gLevel = 'beginner';
 // eslint-disable-next-line no-unused-vars
 var gIsGameOn = false;
 
-var EMPTY = '';
-var VIRUS = '😷';
-
 function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
 }
@@ -23,19 +20,25 @@ function buildBoard(size = 4, virusesCnt = 2) {
   for (var i = 0; i < size; i++) {
     board.push([]);
     for (var j = 0; j < size; j++) {
-      board[i][j] = EMPTY;
+      board[i][j] = {
+        virusesAroundCount: 0,
+        isShown: false,
+        isVirus: false,
+        isMarked: false,
+      };
     }
   }
-  console.log(board);
+  // console.table(board);
 
-  for (var k = virusesCnt; k > 0; k--) {
-    var iIdx = getRandomIntInclusive(0, size - 1);
-    var jIdx = getRandomIntInclusive(0, size - 1);
-    board[iIdx][jIdx] = VIRUS;
-  }
+  // for (var k = virusesCnt; k > 0; k--) {
+  //   var iIdx = getRandomIntInclusive(0, size - 1);
+  //   var jIdx = getRandomIntInclusive(0, size - 1);
+  //   board[iIdx][jIdx].isVirus = true;
+  // }
   // Hardcoding:
-  // board[1][1] = VIRUS;
-  // board[3][3] = VIRUS;
+  board[0][0].isVirus = true;
+  board[1][1].isVirus = true;
+  board[3][3].isVirus = true;
   return board;
 }
 
@@ -62,7 +65,7 @@ function setLevel(button) {
 }
 
 function isVirus(cellLocation) {
-  return gBoard[cellLocation.i][cellLocation.j] === VIRUS;
+  return gBoard[cellLocation.i][cellLocation.j].isVirus;
 }
 
 function getVirusesNegsCount(cellLocation) {
@@ -81,9 +84,9 @@ function getVirusesNegsCount(cellLocation) {
 function setVirusesNegsCount(board) {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board.length; j++) {
-      if (board[i][j] !== VIRUS) {
+      if (!board[i][j].isVirus) {
         var cnt = getVirusesNegsCount({ i, j });
-        board[i][j] = cnt > 0 ? cnt : EMPTY;
+        board[i][j].virusesAroundCount = cnt;
       }
     }
   }
