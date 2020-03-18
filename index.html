@@ -4,23 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coronasweeper</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/style.css">
 </head>
 <body onload="initGame()">
 
   <div class="container">
     <h1>Coronasweeper</h1>
-      <button type="button" class="beginner" id="beginner" onclick="setLevel(this)">Beginner</button>
-      <button type="button" class="medium" id="medium" onclick="setLevel(this)">Medium</button>
-      <button type="button" class="expert" id="expert" onclick="setLevel(this)">Expert</button>
-    <table>
-      <tbody>
-
-      </tbody>
-    </table>
+    <div class='level-buttons'>
+      <h2 class="levels-header">Choose level:</h2>
+      <button type="button" class="level-button beginner-level-button" id="beginner" onclick="setLevel(this)">Beginner</button>
+      <button type="button" class="level-button medium-level-button" id="medium" onclick="setLevel(this)">Medium</button>
+      <button type="button" class="level-button expert-level-button" id="expert" onclick="setLevel(this)">Expert</button>
+    </div>
+    <div class="board-container">
+      <!-- <table>
+        <tbody class='board'>
+  
+        </tbody>
+      </table> -->
+    </div>
   </div>
   
-  <script src="js/utils.js"></script>
+  <!-- <script src="js/utils.js"></script> -->
   <script src="js/game.js"></script>
 </body>
 </html>

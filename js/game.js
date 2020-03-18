@@ -9,7 +9,12 @@ var gViruses = 2;
 // eslint-disable-next-line no-unused-vars
 var gLevel = 'beginner';
 // eslint-disable-next-line no-unused-vars
-var gIsGameOn = false;
+var gGame = {
+  isOn: false,
+  shownCount: 0,
+  markedCount: 0,
+  secsPassed: 0
+};
 
 function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
@@ -40,6 +45,34 @@ function buildBoard(size = 4, virusesCnt = 2) {
   board[1][1].isVirus = true;
   board[3][3].isVirus = true;
   return board;
+}
+
+function renderBoard(board) {
+  var strHTML = '';
+  const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  var width = 0;
+  var height = 0;
+  switch (gSize) {
+    case 4:
+    default:
+      width = height = `${vw * 0.3 * 0.24}px`;
+      break;
+    case 8:
+      width = height = `${vw * 0.3 * 0.116}px`;
+      break;
+    case 12:
+      width = height = `${vw * 0.3 * 0.075}px`;
+      break;
+  }
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[0].length; j++) {
+      var className = `cell cell-${i}-${j}`;
+      strHTML +=
+      `<div class="${className}" style="width:${width};height:${height}"></div>`;
+    }
+  }
+  var elBoard = document.querySelector('.board-container');
+  elBoard.innerHTML = strHTML;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -97,5 +130,5 @@ function setVirusesNegsCount(board) {
 function initGame() {
   gBoard = buildBoard();
   setVirusesNegsCount(gBoard);
-  // renderBoard(gBoard, '.board');
+  renderBoard(gBoard);
 }
