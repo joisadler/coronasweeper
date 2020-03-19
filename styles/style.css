@@ -14,10 +14,15 @@ body {
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  font-family: 'Righteous', cursive;
+  background-image: url(../img/background.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 h1 {
   text-transform: uppercase;
+  margin-bottom: 20px;
 }
 
 .container {
@@ -27,7 +32,6 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid black; */
 }
 
 button:active, button:focus {
@@ -41,7 +45,7 @@ button:active, button:focus {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  border: 1px solid black;
+  margin-bottom: 15px;
 }
 
 .levels-header {
@@ -61,6 +65,7 @@ button:active, button:focus {
   margin: 0;
   border-radius: 10px;
   transition: all .5s;
+  background-color: white;
 }
 
 .level-button:hover {
@@ -74,7 +79,7 @@ button:active, button:focus {
   flex-direction: row;
   justify-content: start;
   align-items: center;
-  border: 1px solid black;
+  margin-bottom: 15px;
 }
 
 .hint {
@@ -86,6 +91,7 @@ button:active, button:focus {
   transition: all .5s;
   background: url(../img/hint.png);
   background-size: contain;
+  background-repeat: no-repeat;
   margin-left: 10px;
 }
 
@@ -96,7 +102,7 @@ button:active, button:focus {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  border: 1px solid black;
+  margin-bottom: 15px;
 }
 
 .game-info-header {
@@ -131,13 +137,14 @@ span {
 }
 
 .start-over {
-  width: calc(100vw * 0.3 * 0.1 * 0.8);
+  width: calc(100vw * 0.3 * 0.1 * 0.65);
   height: 80%;
   border: 1px solid black;
   margin: 0;
   border-radius: 10px;
   transition: all .5s;
   background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .board-container {
