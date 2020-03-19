@@ -58,9 +58,6 @@ function infectCells() {
 }
 
 function isVictory() {
-  // Game ends when all mines are
-  // marked and all the other cells
-  // are shown
   var victory = true;
   for (var i = 0; i < gSize; i++) {
     for (var j = 0; j < gSize; j++) {
@@ -112,6 +109,14 @@ function showGameOver(i, j) {
   infectedCells.forEach(function (cell) {
     cell.style.backgroundColor = 'white';
     cell.style.backgroundImage = 'url("img/corona.png")';
+  });
+  var markedCells = document.querySelectorAll('.marked');
+  markedCells.forEach(function (cell) {
+    if (!cell.classList.contains('infected')) {
+      var elWrongLayer = document.createElement('div');
+      elWrongLayer.classList.add('wrong');
+      cell.appendChild(elWrongLayer);
+    }
   });
   var elCurrentInfectedCell = document.querySelector(`.cell-${i}-${j}`);
   elCurrentInfectedCell.style.backgroundColor = 'red';
@@ -165,6 +170,7 @@ function expandShown(iIdx, jIdx) {
         var cnt = cell.virusesAroundCount;
         if (cell.isVirus) continue;
         if (cell.isShown) continue;
+        if (cell.isMarked) continue;
         cell.isShown = true;
         if (cnt > 0) {
           revealCell(i, j, cnt);
