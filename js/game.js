@@ -5,6 +5,7 @@
 
 // eslint-disable-next-line no-unused-vars
 var gBoard;
+var gTimer;
 var gSize = 4;
 var gViruses = 2;
 // eslint-disable-next-line no-unused-vars
@@ -21,31 +22,92 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
 }
 
-function buildBoard(size, virusesCnt) {
+function buildBoard(size) {
   var board = [];
+  var id = 1;
   for (var i = 0; i < size; i++) {
     board.push([]);
     for (var j = 0; j < size; j++) {
       board[i][j] = {
+        id,
         virusesAroundCount: 0,
         isShown: false,
         isVirus: false,
         isMarked: false,
       };
+      id++;
     }
-  }
-
-  // Infect random cells:
-  for (var k = virusesCnt; k > 0; k--) {
-    var iIdx = getRandomIntInclusive(0, size - 1);
-    var jIdx = getRandomIntInclusive(0, size - 1);
-    board[iIdx][jIdx].isVirus = true;
   }
   return board;
 }
 
+function infectCells() {
+  var emptyCells = gBoard.flat();
+  for (var i = 0; i < gViruses; i++) {
+    var idx = getRandomIntInclusive(0, emptyCells.length - 1);
+    var randomCell = emptyCells[idx];
+    var cell;
+    gBoard.forEach(function (row) {
+      if (row.includes(randomCell)) {
+        cell = row[row.indexOf(randomCell)];
+      }
+    });
+    cell.isVirus = true;
+    emptyCells.splice(emptyCells.indexOf(randomCell), 1);
+  }
+}
+
+function isVictory() {
+  // Game ends when all mines are
+  // marked and all the other cells
+  // are shown
+  var victory = true;
+  for (var i = 0; i < gSize; i++) {
+    for (var j = 0; j < gSize; j++) {
+      var cell = gBoard[i][j];
+      if (gViruses !== 0) victory = false;
+      if (!cell.isShown && !cell.isMarked) victory = false;
+    }
+  }
+  return victory;
+}
+
+function stopTimer() {
+  clearInterval(gTimer);
+}
+
+function showTimer() {
+  if (gTimer) stopTimer();
+  var time = 0;
+  gTimer = setInterval(function () {
+    var timer = document.querySelector('.timer');
+    timer.innerHTML = time;
+    time++;
+  }, 1000);
+}
+
+function showVictory() {
+  gGame.isOn = false;
+  stopTimer();
+  var cells = document.querySelectorAll('.cell');
+  cells.forEach(function (c) {
+    c.onclick = null;
+    c.oncontextmenu = null;
+  });
+  var startOverButton = document.querySelector('.start-over');
+  startOverButton.classList.remove('normal');
+  startOverButton.classList.add('win');
+}
+
 function showGameOver(i, j) {
   gBoard[i][j].isShown = true;
+  gGame.isOn = false;
+  stopTimer();
+  var cells = document.querySelectorAll('.cell');
+  cells.forEach(function (c) {
+    c.onclick = null;
+    c.oncontextmenu = null;
+  });
   var infectedCells = document.querySelectorAll('.infected');
   infectedCells.forEach(function (cell) {
     cell.style.backgroundColor = 'white';
@@ -53,13 +115,46 @@ function showGameOver(i, j) {
   });
   var elCurrentInfectedCell = document.querySelector(`.cell-${i}-${j}`);
   elCurrentInfectedCell.style.backgroundColor = 'red';
+  var startOverButton = document.querySelector('.start-over');
+  startOverButton.classList.remove('normal');
+  startOverButton.classList.add('lose');
 }
 
 function revealCell(i, j, num) {
+  var color = '';
+  switch (num) {
+    case 1:
+      color = 'blue';
+      break;
+    case 2:
+      color = 'green';
+      break;
+    case 3:
+      color = 'red';
+      break;
+    case 4:
+      color = 'purple';
+      break;
+    case 5:
+      color = 'black';
+      break;
+    case 6:
+      color = 'maroon';
+      break;
+    case 7:
+      color = 'gray';
+      break;
+    case 8:
+      color = 'turquoise';
+      break;
+    default:
+  }
   gBoard[i][j].isShown = true;
   var elCell = document.querySelector(`.cell-${i}-${j}`);
   elCell.style.backgroundColor = 'white';
+  elCell.style.color = color;
   elCell.innerText = num > 0 ? num : '';
+  if (isVictory()) showVictory();
 }
 
 function expandShown(iIdx, jIdx) {
@@ -82,93 +177,30 @@ function expandShown(iIdx, jIdx) {
   }
 }
 
-function cellClicked(elCell, i, j) {
-  var cell = gBoard[i][j];
-  if (!cell.isShown && !cell.isMarked) {
-    var cnt = cell.virusesAroundCount;
-    if (!cell.isVirus) {
-      if (cnt) {
-        revealCell(i, j, cnt);
-      } else {
-        expandShown(i, j);
-      }
-      return;
-    }
-    showGameOver(i, j);
-  }
+function showVirusesCount() {
+  var elVirusesCount = document.querySelector('.viruses-count');
+  elVirusesCount.innerText = gViruses;
 }
 
-function cellMarked(elCell) {
-  // Todo:
-  // Called on right click to mark a
-  // cell (suspected to be a mine)
-  // Search the web (and
-  // implement) how to hide the
-  // context menu on right click
-
-  // Right click to flag/unflag a suspected cell (you cannot reveal a
-  //   flagged cell)
+function decreaseVirusesCount() {
+  gViruses--;
+  var elVirusesCount = document.querySelector('.viruses-count');
+  elVirusesCount.innerText = gViruses;
 }
 
-function renderBoard() {
-  var elBoard = document.querySelector('.board-container');
-  var vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-  var width = 0;
-  var height = 0;
-  switch (gSize) {
-    case 4:
-    default:
-      width = height = `${vw * 0.3 * 0.24}px`;
-      break;
-    case 8:
-      width = height = `${vw * 0.3 * 0.116}px`;
-      break;
-    case 12:
-      width = height = `${vw * 0.3 * 0.075}px`;
-      break;
-  }
-  for (let i = 0; i < gSize; i++) {
-    for (let j = 0; j < gSize; j++) {
-      var elCell = document.createElement('div');
-      elCell.classList.add('cell', `cell-${i}-${j}`);
-      if (gBoard[i][j].isVirus) {
-        elCell.classList.add('infected');
-      }
-      elCell.style.width = width;
-      elCell.style.height = height;
-      elCell.addEventListener('click', function () {
-        cellClicked(elCell, i, j);
-      });
-      elCell.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        cellMarked(elCell);
-        return false;
-      });
-      elBoard.appendChild(elCell);
-    }
-  }
+function increaseVirusesCount() {
+  gViruses++;
+  var elVirusesCount = document.querySelector('.viruses-count');
+  elVirusesCount.innerText = gViruses;
 }
 
-// eslint-disable-next-line no-unused-vars
-function setLevel(button) {
-  var level = button.id;
-  gLevel = level;
-  switch (level) {
-    case 'beginner':
-    default:
-      gSize = 4;
-      gViruses = 2;
-      break;
-    case 'medium':
-      gSize = 8;
-      gViruses = 12;
-      break;
-    case 'expert':
-      gSize = 12;
-      gViruses = 30;
-      break;
-  }
-  buildBoard(gSize, gViruses);
+function startGame() {
+  gGame.isOn = true;
+  var startOverButton = document.querySelector('.start-over');
+  startOverButton.classList.remove('smile');
+  startOverButton.classList.add('normal');
+  showVirusesCount();
+  showTimer();
 }
 
 function isVirus(cellLocation) {
@@ -199,10 +231,149 @@ function setVirusesNegsCount(board) {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-function initGame() {
-  setLevel(document.querySelector('.expert-level-button')); // hardcoding
+function cellClicked(elCell, i, j) {
+  if (!gGame.isOn) startGame();
+  // if (isVictory()) showVictory();
+  var cell = gBoard[i][j];
+  if (!cell.isShown && !cell.isMarked) {
+    var cnt = cell.virusesAroundCount;
+    if (!cell.isVirus) {
+      if (cnt) {
+        revealCell(i, j, cnt);
+      } else {
+        expandShown(i, j);
+      }
+      return;
+    }
+    showGameOver(i, j);
+  }
+}
+
+function cellMarked(elCell) {
+  var i = elCell.classList[1].split('-')[1];
+  var j = elCell.classList[1].split('-')[2];
+  var cell = gBoard[i][j];
+  if (!cell.isShown) {
+    if (!cell.isMarked) {
+      cell.isMarked = true;
+      elCell.classList.add('marked');
+      decreaseVirusesCount();
+      if (isVictory()) showVictory();
+    } else {
+      cell.isMarked = false;
+      elCell.classList.remove('marked');
+      increaseVirusesCount();
+    }
+  }
+}
+
+function renderBoard() {
+  var elBoard = document.querySelector('.board-container');
+  elBoard.innerHTML = '';
+  var vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  var width = 0;
+  var height = 0;
+  switch (gSize) {
+    case 4:
+    default:
+      width = height = `${vw * 0.3 * 0.24}px`;
+      break;
+    case 8:
+      width = height = `${vw * 0.3 * 0.116}px`;
+      break;
+    case 12:
+      width = height = `${vw * 0.3 * 0.075}px`;
+      break;
+  }
+  for (let i = 0; i < gSize; i++) {
+    for (let j = 0; j < gSize; j++) {
+      var elCell = document.createElement('div');
+      elCell.classList.add('cell', `cell-${i}-${j}`);
+      if (gBoard[i][j].isVirus) {
+        elCell.classList.add('infected');
+      }
+      elCell.style.width = width;
+      elCell.style.height = height;
+      var clickHandler = function () {
+        cellClicked(elCell, i, j);
+      };
+      var rightClickHandler = function (e) {
+        e.preventDefault();
+        cellMarked(e.target);
+        showVirusesCount();
+      };
+      elCell.onclick = clickHandler;
+      elCell.oncontextmenu = rightClickHandler;
+      elBoard.appendChild(elCell);
+    }
+  }
+}
+
+function startOver() {
+  switch (gLevel) {
+    case 'beginner':
+    default:
+      gSize = 4;
+      gViruses = 2;
+      break;
+    case 'medium':
+      gSize = 8;
+      gViruses = 12;
+      break;
+    case 'expert':
+      gSize = 12;
+      gViruses = 30;
+      break;
+  }
   gBoard = buildBoard(gSize, gViruses);
+  infectCells();
   setVirusesNegsCount(gBoard);
   renderBoard();
+  gGame.isOn = true;
+  var startOverButton = document.querySelector('.start-over');
+  startOverButton.classList.remove('win');
+  startOverButton.classList.remove('lose');
+  startOverButton.classList.remove('smile');
+  startOverButton.classList.add('normal');
+  showVirusesCount();
+  showTimer();
+}
+
+// eslint-disable-next-line no-unused-vars
+function setLevel(button) {
+  var level = button.id;
+  gLevel = level;
+  switch (level) {
+    case 'beginner':
+    default:
+      gSize = 4;
+      gViruses = 2;
+      break;
+    case 'medium':
+      gSize = 8;
+      gViruses = 12;
+      break;
+    case 'expert':
+      gSize = 12;
+      gViruses = 30;
+      break;
+  }
+  // buildBoard(gSize, gViruses);
+  startOver();
+}
+
+// eslint-disable-next-line no-unused-vars
+function initGame() {
+  // hardcoding:
+  gLevel = 'expert'; //
+  gSize = 12; //
+  gViruses = 30; //
+
+  gBoard = buildBoard(gSize, gViruses);
+  infectCells();
+  setVirusesNegsCount(gBoard);
+  renderBoard();
+  var startOverButton = document.querySelector('.start-over');
+  startOverButton.classList.add('smile');
+  showVirusesCount();
 }
