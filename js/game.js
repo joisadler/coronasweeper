@@ -10,12 +10,10 @@ var gSize = 4;
 var gViruses = 2;
 // eslint-disable-next-line no-unused-vars
 var gLevel = 'beginner';
+var gLives = 3;
 // eslint-disable-next-line no-unused-vars
 var gGame = {
   isOn: false,
-  shownCount: 0,
-  markedCount: 0,
-  secsPassed: 0,
   isHintOn: false
 };
 
@@ -108,7 +106,11 @@ function showGameOver(i, j) {
   });
   var infectedCells = document.querySelectorAll('.infected');
   infectedCells.forEach(function (cell) {
-    cell.style.backgroundColor = 'white';
+    if (cell.classList.contains('virus-found')) {
+      cell.style.backgroundColor = 'red';
+    } else {
+      cell.style.backgroundColor = 'white';
+    }
     cell.style.backgroundImage = 'url("img/corona.png")';
   });
   var markedCells = document.querySelectorAll('.marked');
@@ -124,6 +126,11 @@ function showGameOver(i, j) {
   var startOverButton = document.querySelector('.start-over');
   startOverButton.classList.remove('normal');
   startOverButton.classList.add('lose');
+
+  var hints = document.querySelectorAll('.hint');
+  hints.forEach(function (hint) {
+    hint.style.display = 'none';
+  });
 }
 
 function revealCell(i, j, num) {
@@ -158,6 +165,19 @@ function revealCell(i, j, num) {
   gBoard[i][j].isShown = true;
   var elCell = document.querySelector(`.cell-${i}-${j}`);
   elCell.style.backgroundColor = 'white';
+  if (elCell.classList.contains('infected')) {
+    var lives = document.querySelector('.lives');
+    lives.removeChild(lives.children[0]);
+    if (gLives === 0) {
+      showGameOver(i, j);
+      return;
+    }
+    elCell.classList.add('virus-found');
+    elCell.style.backgroundColor = 'red';
+    elCell.style.backgroundImage = 'url(img/corona.png)';
+    // todo: add sound
+    return;
+  }
   elCell.style.color = color;
   elCell.innerText = num > 0 ? num : '';
   if (isVictory()) showVictory();
@@ -223,6 +243,9 @@ function showHint(iIdx, jIdx) {
         elCell.style.backgroundColor = 'white';
         elCell.style.color = color;
         if (elCell.classList.contains('infected')) {
+          if (elCell.classList.contains('virus-found')) {
+            elCell.style.backgroundColor = 'red';
+          }
           elCell.style.backgroundImage = 'url(img/corona.png)';
         } else {
           elCell.innerText = cnt > 0 ? cnt : '';
@@ -239,7 +262,13 @@ function showHint(iIdx, jIdx) {
       if (!cel.isShown) {
         el.style.background = 'silver';
         el.style.backgroundSize = 'contain';
+        if (cel.isMarked) {
+          el.style.backgroundImage = 'url(img/biohazard.png)';
+        }
         el.innerText = '';
+      }
+      if (el.classList.contains('virus-found')) {
+        el.style.backgroundColor = 'red';
       }
     });
   }, 1000);
@@ -316,6 +345,13 @@ function cellClicked(elCell, i, j) {
       }
       return;
     }
+    if (gLives > 0) {
+      gLives--;
+      gViruses--;
+      revealCell(i, j, cnt);
+      showVirusesCount();
+      return;
+    }
     showGameOver(i, j);
   }
 }
@@ -370,6 +406,7 @@ function renderBoard() {
       };
       var rightClickHandler = function (e) {
         e.preventDefault();
+        if (!gGame.isOn) startGame();
         cellMarked(e.target);
         showVirusesCount();
       };
@@ -410,6 +447,11 @@ function startOver() {
   hintButtons.forEach(function (button) {
     button.style.display = 'inline-block';
   });
+
+  if (gViruses < 3) gLives = gViruses;
+  var livesContainer = document.querySelector('.lives');
+  var lifeStr = '<div class="live"></div>';
+  livesContainer.innerHTML = lifeStr.repeat(gLives);
   showVirusesCount();
   showTimer();
 }
