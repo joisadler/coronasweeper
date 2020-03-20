@@ -250,6 +250,10 @@ function showHint(iIdx, jIdx) {
         } else {
           elCell.innerText = cnt > 0 ? cnt : '';
         }
+        var hoverHandler = function (e) {
+          e.target.style.cursor = 'auto';
+        };
+        elCell.onmouseover = hoverHandler;
       }
     }
   }
@@ -410,8 +414,14 @@ function renderBoard() {
         cellMarked(e.target);
         showVirusesCount();
       };
+      var hoverHandler = function (e) {
+        if (gGame.isHintOn) {
+          e.target.style.cursor = 'url(img/hint-pointer.png), pointer';
+        }
+      };
       elCell.onclick = clickHandler;
       elCell.oncontextmenu = rightClickHandler;
+      elCell.onmouseover = hoverHandler;
       elBoard.appendChild(elCell);
     }
   }
