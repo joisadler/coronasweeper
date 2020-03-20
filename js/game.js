@@ -11,6 +11,7 @@ var gViruses = 2;
 // eslint-disable-next-line no-unused-vars
 var gLevel = 'beginner';
 var gLives = 3;
+var gFinds = 3;
 // eslint-disable-next-line no-unused-vars
 var gGame = {
   isOn: false,
@@ -492,6 +493,26 @@ function setLevel(button) {
 function getHint(elButton) {
   elButton.style.display = 'none';
   gGame.isHintOn = true;
+}
+
+// eslint-disable-next-line no-unused-vars
+function showRandomHealthyCell(elButton) {
+  if (gFinds <= 0) return;
+  gFinds--;
+  elButton.innerText = gFinds;
+  var cells = [...document.querySelectorAll('.cell')];
+  var healthyCells = cells.filter(function (cell) {
+    var i = cell.classList[1].split('-')[1];
+    var j = cell.classList[1].split('-')[2];
+    return !cell.classList.contains('infected') &&
+    !cell.classList.contains('marked') &&
+    !gBoard[i][j].isShown;
+  });
+  var randomHealthyCell = healthyCells[getRandomIntInclusive(0, healthyCells.length - 1)];
+  randomHealthyCell.style.backgroundImage = 'url(img/healthy.png)';
+  setTimeout(function () {
+    randomHealthyCell.style.backgroundImage = 'none';
+  }, 1000);
 }
 
 // eslint-disable-next-line no-unused-vars

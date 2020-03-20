@@ -105,6 +105,20 @@ button:active, button:focus {
   margin-left: 10px;
 }
 
+.find {
+  width: calc(100vw * 0.3 * 0.1 * 0.8);
+  height: 80%;
+  border: none;
+  border-radius: 10px;
+  transition: all .5s;
+  background: url(../img/find.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: 0 0 15px 0;
+  padding: 0 15px 5px 0;
+  font-size: 0.5em;
+}
+
 .lives {
   width: 20;
   height: 100%;
