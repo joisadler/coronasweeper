@@ -117,6 +117,12 @@ function showVictory() {
   var startOverButton = document.querySelector('.start-over');
   startOverButton.classList.remove('normal');
   startOverButton.classList.add('win');
+  var hints = document.querySelectorAll('.hint');
+  hints.forEach(function (hint) {
+    hint.style.visibility = 'hidden';
+  });
+  var elFindButton = document.querySelector('.find');
+  elFindButton.style.visibility = 'hidden';
 }
 
 function showGameOver(i, j) {
@@ -156,6 +162,8 @@ function showGameOver(i, j) {
   hints.forEach(function (hint) {
     hint.style.visibility = 'hidden';
   });
+  var elFindButton = document.querySelector('.find');
+  elFindButton.style.visibility = 'hidden';
 }
 
 function revealCell(i, j, num) {
@@ -503,6 +511,8 @@ function startOver() {
   hintButtons.forEach(function (button) {
     button.style.visibility = 'visible';
   });
+  var elFindButton = document.querySelector('.find');
+  elFindButton.style.visibility = 'visible';
 
   if (gViruses < 3) gLives = gViruses;
   var livesContainer = document.querySelector('.lives');
