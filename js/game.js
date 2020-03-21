@@ -441,14 +441,17 @@ function startOver() {
     default:
       gSize = 4;
       gViruses = 2;
+      gLives = 2;
       break;
     case 'medium':
       gSize = 8;
       gViruses = 12;
+      gLives = 3;
       break;
     case 'expert':
       gSize = 12;
       gViruses = 30;
+      gLives = 3;
       break;
   }
   gBoard = buildBoard(gSize, gViruses);
