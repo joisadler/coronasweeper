@@ -54,7 +54,7 @@ button:hover, button:active, button:focus {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 40px;
 }
 
 .levels-header {
@@ -107,7 +107,7 @@ button:hover, button:active, button:focus {
   background: url(../img/hint.png);
   background-size: contain;
   background-repeat: no-repeat;
-  background-color: transparent;
+  background-color: steelblue;
   margin-left: 10px;
 }
 
@@ -231,7 +231,7 @@ span {
   background-size: contain;
   font-size: 2em;
   position: relative;
-  transition: all .5s;
+  /* transition: all .5s; */
 }
 
 .cell:hover {
