@@ -251,25 +251,22 @@ function showHint(iIdx, jIdx) {
         } else {
           elCell.innerText = cnt > 0 ? cnt : '';
         }
-        var hoverHandler = function (e) {
-          e.target.style.cursor = 'auto';
-        };
-        elCell.onmouseover = hoverHandler;
       }
     }
   }
   setTimeout(function () {
     var cellElements = document.querySelectorAll('.cell');
     cellElements.forEach(function (el) {
+      var hoverHandler = function (e) {
+        e.target.style.cursor = 'auto';
+      };
+      el.onmouseover = hoverHandler;
       var x = el.classList[1].split('-')[1];
       var y = el.classList[1].split('-')[2];
       var cel = gBoard[x][y];
       if (!cel.isShown) {
-        el.style.background = 'silver';
+        el.style.backgroundColor = 'silver';
         el.style.backgroundSize = 'contain';
-        if (cel.isMarked) {
-          el.style.backgroundImage = 'url(img/biohazard.png)';
-        }
         el.innerText = '';
       }
       if (el.classList.contains('virus-found')) {
