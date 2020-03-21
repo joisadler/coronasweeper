@@ -446,6 +446,7 @@ function startOver() {
   gGame.isOn = false;
   gGame.isVictory = false;
   gGame.isOver = false;
+  gFinds = 3;
   switch (gLevel) {
     case 'beginner':
     default:
@@ -485,7 +486,9 @@ function startOver() {
   showVirusesCount();
   stopTimer();
   var timer = document.querySelector('.timer');
-  timer.innerHTML = '0';
+  timer.innerText = '0';
+  var findButton = document.querySelector('.find');
+  findButton.innerText = '3';
 }
 
 // eslint-disable-next-line no-unused-vars
