@@ -15,7 +15,9 @@ var gFinds = 3;
 // eslint-disable-next-line no-unused-vars
 var gGame = {
   isOn: false,
-  isHintOn: false
+  isHintOn: false,
+  isVictory: false,
+  isOver: false
 };
 
 function getRandomIntInclusive(min, max) {
@@ -85,6 +87,7 @@ function showTimer() {
 
 function showVictory() {
   gGame.isOn = false;
+  gGame.isVictory = true;
   stopTimer();
   var cells = document.querySelectorAll('.cell');
   cells.forEach(function (c) {
@@ -99,6 +102,7 @@ function showVictory() {
 function showGameOver(i, j) {
   gBoard[i][j].isShown = true;
   gGame.isOn = false;
+  gGame.isOver = true;
   stopTimer();
   var cells = document.querySelectorAll('.cell');
   cells.forEach(function (c) {
@@ -244,6 +248,9 @@ function cellMarked(elCell) {
 }
 
 function showHint(iIdx, jIdx) {
+  if (gGame.isVictory || gGame.isOver) {
+    return;
+  }
   gGame.isHintOn = false;
   for (var i = iIdx - 1; i <= iIdx + 1; i++) {
     for (var j = jIdx - 1; j <= jIdx + 1; j++) {
@@ -436,6 +443,9 @@ function renderBoard() {
 }
 
 function startOver() {
+  gGame.isOn = false;
+  gGame.isVictory = false;
+  gGame.isOver = false;
   switch (gLevel) {
     case 'beginner':
     default:
@@ -458,7 +468,6 @@ function startOver() {
   infectCells();
   setVirusesNegsCount(gBoard);
   renderBoard();
-  gGame.isOn = true;
   var startOverButton = document.querySelector('.start-over');
   startOverButton.classList.remove('win');
   startOverButton.classList.remove('lose');
@@ -474,7 +483,9 @@ function startOver() {
   var lifeStr = '<div class="live"></div>';
   livesContainer.innerHTML = lifeStr.repeat(gLives);
   showVirusesCount();
-  showTimer();
+  stopTimer();
+  var timer = document.querySelector('.timer');
+  timer.innerHTML = '0';
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -501,6 +512,7 @@ function setLevel(button) {
 
 // eslint-disable-next-line no-unused-vars
 function getHint(elButton) {
+  if (!(gGame.isOn)) return;
   elButton.style.display = 'none';
   gGame.isHintOn = true;
 }
