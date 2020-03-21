@@ -325,12 +325,16 @@ function showHint(iIdx, jIdx) {
     var cellElements = document.querySelectorAll('.cell');
     cellElements.forEach(function (el) {
       var hoverHandler = function (e) {
-        e.target.style.backgroundColor = 'darkslateblue';
-        e.target.style.cursor = 'auto';
+        if (!e.target.classList.contains('shown')) {
+          e.target.style.backgroundColor = 'darkslateblue';
+          e.target.style.cursor = 'auto';
+        }
       };
       el.onmouseover = hoverHandler;
       var hoverEndHandler = function (e) {
-        e.target.style.backgroundColor = 'steelblue';
+        if (!e.target.classList.contains('shown')) {
+          e.target.style.backgroundColor = 'steelblue';
+        }
       };
       el.onmouseout = hoverEndHandler;
       var rightClickHandler = function (e) {
