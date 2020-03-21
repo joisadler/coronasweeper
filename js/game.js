@@ -578,7 +578,7 @@ function initGame() {
   showBestTime();
 }
 
-var yearSpan = document.getElementById('year');
+var yearSpan = document.querySelector('.year');
 var year = new Date().getFullYear();
 var yearSpanText = year === 2020 ? year : `2020-${year}`;
 yearSpan.textContent = `\xA9 ${yearSpanText} `;
