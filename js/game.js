@@ -165,6 +165,7 @@ function revealCell(i, j, num) {
   }
   gBoard[i][j].isShown = true;
   var elCell = document.querySelector(`.cell-${i}-${j}`);
+  elCell.classList.add('shown');
   elCell.style.backgroundColor = 'white';
   if (elCell.classList.contains('infected')) {
     var lives = document.querySelector('.lives');
@@ -201,6 +202,43 @@ function expandShown(iIdx, jIdx) {
           expandShown(i, j);
         }
       }
+    }
+  }
+}
+
+function showVirusesCount() {
+  var elVirusesCount = document.querySelector('.viruses-count');
+  elVirusesCount.innerText = gViruses;
+}
+
+function decreaseVirusesCount() {
+  gViruses--;
+  var elVirusesCount = document.querySelector('.viruses-count');
+  elVirusesCount.innerText = gViruses;
+}
+
+function increaseVirusesCount() {
+  gViruses++;
+  var elVirusesCount = document.querySelector('.viruses-count');
+  elVirusesCount.innerText = gViruses;
+}
+
+function cellMarked(elCell) {
+  var i = elCell.classList[1].split('-')[1];
+  var j = elCell.classList[1].split('-')[2];
+  var cell = gBoard[i][j];
+  if (!cell.isShown) {
+    if (!cell.isMarked) {
+      cell.isMarked = true;
+      elCell.classList.add('marked');
+      elCell.style.backgroundImage = 'url(img/biohazard.png)';
+      decreaseVirusesCount();
+      if (isVictory()) showVictory();
+    } else {
+      cell.isMarked = false;
+      elCell.classList.remove('marked');
+      elCell.style.backgroundImage = 'none';
+      increaseVirusesCount();
     }
   }
 }
@@ -261,36 +299,26 @@ function showHint(iIdx, jIdx) {
         e.target.style.cursor = 'auto';
       };
       el.onmouseover = hoverHandler;
-      var x = el.classList[1].split('-')[1];
-      var y = el.classList[1].split('-')[2];
-      var cel = gBoard[x][y];
-      if (!cel.isShown) {
+      var rightClickHandler = function (e) {
+        e.preventDefault();
+        cellMarked(e.target);
+        showVirusesCount();
+      };
+      el.oncontextmenu = rightClickHandler;
+      if (!el.classList.contains('shown')) {
         el.style.backgroundColor = 'silver';
         el.style.backgroundSize = 'contain';
         el.innerText = '';
+        el.style.backgroundImage = 'none';
+        if (el.classList.contains('marked')) {
+          el.style.backgroundImage = 'url(img/biohazard.png)';
+        }
       }
       if (el.classList.contains('virus-found')) {
         el.style.backgroundColor = 'red';
       }
     });
   }, 1000);
-}
-
-function showVirusesCount() {
-  var elVirusesCount = document.querySelector('.viruses-count');
-  elVirusesCount.innerText = gViruses;
-}
-
-function decreaseVirusesCount() {
-  gViruses--;
-  var elVirusesCount = document.querySelector('.viruses-count');
-  elVirusesCount.innerText = gViruses;
-}
-
-function increaseVirusesCount() {
-  gViruses++;
-  var elVirusesCount = document.querySelector('.viruses-count');
-  elVirusesCount.innerText = gViruses;
 }
 
 function startGame() {
@@ -355,24 +383,6 @@ function cellClicked(elCell, i, j) {
       return;
     }
     showGameOver(i, j);
-  }
-}
-
-function cellMarked(elCell) {
-  var i = elCell.classList[1].split('-')[1];
-  var j = elCell.classList[1].split('-')[2];
-  var cell = gBoard[i][j];
-  if (!cell.isShown) {
-    if (!cell.isMarked) {
-      cell.isMarked = true;
-      elCell.classList.add('marked');
-      decreaseVirusesCount();
-      if (isVictory()) showVictory();
-    } else {
-      cell.isMarked = false;
-      elCell.classList.remove('marked');
-      increaseVirusesCount();
-    }
   }
 }
 

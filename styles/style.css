@@ -14,7 +14,7 @@ body {
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  font-family: 'Righteous', cursive;
+  //font-family: 'Righteous', cursive;
   background-image: url(../img/background.jpg);
   background-size: cover;
   background-repeat: no-repeat;
