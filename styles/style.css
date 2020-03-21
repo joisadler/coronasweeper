@@ -25,6 +25,19 @@ h1 {
   margin-bottom: 20px;
 }
 
+h1, h2, span {
+  color: white;
+}
+
+button {
+  background-color: steelblue;
+}
+
+button:hover, button:active, button:focus {
+  background-color: darkslateblue;
+  outline: none;
+}
+
 .container {
   width: 30%;
   height: 100%;
@@ -32,10 +45,6 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-button:active, button:focus {
-  outline: none;
 }
 
 .level-buttons {
@@ -49,7 +58,7 @@ button:active, button:focus {
 }
 
 .levels-header {
-  width: 20%;
+  width: 25%;
   height: 100%;
   margin: 0;
   font-size: 1.2em;
@@ -61,15 +70,12 @@ button:active, button:focus {
 .level-button {
   width: 20%;
   height: 80%;
-  border: 1px solid black;
   margin: 0;
   border-radius: 10px;
   transition: all .5s;
-  background-color: white;
-}
-
-.level-button:hover {
-
+  border: 1px solid white;
+  color: white;
+  font-size: 1em;
 }
 
 .game-controls {
@@ -117,6 +123,19 @@ button:active, button:focus {
   margin: 0 0 15px 0;
   padding: 0 15px 5px 0;
   font-size: 0.5em;
+}
+
+.undo {
+  width: calc(100vw * 0.3 * 0.1 * 0.8);
+  height: 80%;
+  border-radius: 10px;
+  transition: all .5s;
+  background: url(../img/undo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  margin: 0 0 15px 0;
+  padding: 0;
 }
 
 .lives {
@@ -192,28 +211,31 @@ span {
 .board-container {
   width: 100%;
   height: calc(100vw * .3);
-  border: 1px solid black;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-content: space-evenly;
-  background-color: lightgray;
+  background-color: transparent;
 }
 
 .cell {
   width: 24%;
   height: calc((100vw * .3) * 0.24);
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 5px;
-  background-color: silver;
-  color: blue;
+  background-color: steelblue;
   display: flex;
   justify-content: center;
   align-items: center;
   background-size: contain;
   font-size: 2em;
   position: relative;
+  transition: all .5s;
+}
+
+.cell:hover {
+  background-color: darkslateblue;
 }
 
 .marked {

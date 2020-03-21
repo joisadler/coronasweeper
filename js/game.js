@@ -335,7 +335,7 @@ function showHint(iIdx, jIdx) {
       };
       el.oncontextmenu = rightClickHandler;
       if (!el.classList.contains('shown')) {
-        el.style.backgroundColor = 'silver';
+        el.style.backgroundColor = 'steelblue';
         el.style.backgroundSize = 'contain';
         el.innerText = '';
         el.style.backgroundImage = 'none';
