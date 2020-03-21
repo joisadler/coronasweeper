@@ -3,22 +3,38 @@
 /* eslint-disable no-param-reassign */
 'use strict';
 
-// eslint-disable-next-line no-unused-vars
 var gBoard;
 var gTimer;
-var gSize = 4;
-var gViruses = 2;
-// eslint-disable-next-line no-unused-vars
-var gLevel = 'beginner';
+var gTime;
+var gSize = 12;
+var gViruses = 30;
+var gLevel = 'expert';
 var gLives = 3;
 var gFinds = 3;
-// eslint-disable-next-line no-unused-vars
 var gGame = {
   isOn: false,
   isHintOn: false,
   isVictory: false,
   isOver: false
 };
+
+function setBestTime(level, time) {
+  var records = JSON.parse(localStorage.getItem('records')) || {};
+  records[level] = time;
+  localStorage.setItem('records', JSON.stringify(records));
+}
+
+function getBestTime(level) {
+  var records = JSON.parse(localStorage.getItem('records')) || {};
+  return records[level];
+}
+var gBestTime = getBestTime(gLevel);
+
+function showBestTime() {
+  var elBestTime = document.querySelector('.best-time');
+  gBestTime = getBestTime(gLevel);
+  elBestTime.innerText = gBestTime || '';
+}
 
 function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
@@ -77,11 +93,11 @@ function stopTimer() {
 
 function showTimer() {
   if (gTimer) stopTimer();
-  var time = 0;
+  gTime = 0;
   gTimer = setInterval(function () {
     var timer = document.querySelector('.timer');
-    timer.innerHTML = time;
-    time++;
+    timer.innerHTML = gTime;
+    gTime++;
   }, 1000);
 }
 
@@ -89,6 +105,10 @@ function showVictory() {
   gGame.isOn = false;
   gGame.isVictory = true;
   stopTimer();
+  if (!getBestTime(gLevel) || gTime < getBestTime(gLevel)) {
+    setBestTime(gLevel, gTime);
+  }
+  gBestTime = getBestTime(gLevel) - 1;
   var cells = document.querySelectorAll('.cell');
   cells.forEach(function (c) {
     c.onclick = null;
@@ -134,7 +154,6 @@ function showGameOver(i, j) {
 
   var hints = document.querySelectorAll('.hint');
   hints.forEach(function (hint) {
-    // hint.style.display = 'none';
     hint.style.visibility = 'hidden';
   });
 }
@@ -173,14 +192,11 @@ function revealCell(i, j, num) {
   elCell.classList.add('shown');
   elCell.style.backgroundColor = 'white';
   if (elCell.classList.contains('infected')) {
-    // var lives = document.querySelector('.lives');
-    // lives.removeChild(lives.children[0]);
     var visibleLives = [...document.querySelectorAll('.live')]
       .filter(function (live) {
         var visibility = live.currentStyle ?
           live.currentStyle.visibility :
           getComputedStyle(live, null).visibility;
-        console.log(visibility);
         return visibility === 'visible';
       });
     visibleLives[0].style.visibility = 'hidden';
@@ -191,7 +207,6 @@ function revealCell(i, j, num) {
     elCell.classList.add('virus-found');
     elCell.style.backgroundColor = 'red';
     elCell.style.backgroundImage = 'url(img/corona.png)';
-    // todo: add sound
     return;
   }
   elCell.style.color = color;
@@ -481,21 +496,12 @@ function startOver() {
   });
 
   if (gViruses < 3) gLives = gViruses;
-  // var livesContainer = document.querySelector('.lives');
-  // var lifeStr = '<div class="live"></div>';
-  // livesContainer.innerHTML = lifeStr.repeat(gLives);
-  // showVirusesCount();
-  // stopTimer();
-  // var timer = document.querySelector('.timer');
-  // timer.innerText = '0';
-  // var findButton = document.querySelector('.find');
-  // findButton.innerText = '3';
-
   var livesContainer = document.querySelector('.lives');
   var lifeStr = '<div class="live"></div>';
   livesContainer.innerHTML = lifeStr.repeat(gLives);
   showVirusesCount();
   stopTimer();
+  showBestTime();
   var timer = document.querySelector('.timer');
   timer.innerText = '0';
   var findButton = document.querySelector('.find');
@@ -526,7 +532,6 @@ function setLevel(button) {
 
 // eslint-disable-next-line no-unused-vars
 function getHint(elButton) {
-  // if (!(gGame.isOn)) return;
   elButton.disabled = false;
   elButton.style.visibility = 'hidden';
   gGame.isHintOn = true;
@@ -563,9 +568,6 @@ function showRandomHealthyCell(elButton) {
 
 // eslint-disable-next-line no-unused-vars
 function initGame() {
-  gLevel = 'expert';
-  gSize = 12;
-  gViruses = 30;
   gBoard = buildBoard(gSize, gViruses);
   infectCells();
   setVirusesNegsCount(gBoard);
@@ -573,4 +575,5 @@ function initGame() {
   var startOverButton = document.querySelector('.start-over');
   startOverButton.classList.add('smile');
   showVirusesCount();
+  showBestTime();
 }

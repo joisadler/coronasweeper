@@ -153,9 +153,9 @@ button:active, button:focus {
 }
 
 .game-info-header {
-  width: 20%;
+  width: auto;
   height: 100%;
-  margin: 0;
+  margin: 0 10px 0 0;
   font-size: 1.2em;
   font-weight: bold;
   display: flex;
@@ -163,19 +163,14 @@ button:active, button:focus {
   align-items: center;
 }
 
-.viruses-count-container, .timer-container {
-  width: 25%;
+.viruses-count-container, .timer-container, .best-time-container {
+  width: auto;
   height: 80%;
   padding: 0;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
-
-.viruses-count-container h2, .timer-container h2{
-  width: 70%;
-  height: 100%;
 }
 
 span {
