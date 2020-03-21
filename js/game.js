@@ -134,7 +134,8 @@ function showGameOver(i, j) {
 
   var hints = document.querySelectorAll('.hint');
   hints.forEach(function (hint) {
-    hint.style.display = 'none';
+    // hint.style.display = 'none';
+    hint.style.visibility = 'hidden';
   });
 }
 
@@ -172,8 +173,17 @@ function revealCell(i, j, num) {
   elCell.classList.add('shown');
   elCell.style.backgroundColor = 'white';
   if (elCell.classList.contains('infected')) {
-    var lives = document.querySelector('.lives');
-    lives.removeChild(lives.children[0]);
+    // var lives = document.querySelector('.lives');
+    // lives.removeChild(lives.children[0]);
+    var visibleLives = [...document.querySelectorAll('.live')]
+      .filter(function (live) {
+        var visibility = live.currentStyle ?
+          live.currentStyle.visibility :
+          getComputedStyle(live, null).visibility;
+        console.log(visibility);
+        return visibility === 'visible';
+      });
+    visibleLives[0].style.visibility = 'hidden';
     if (gLives === 0) {
       showGameOver(i, j);
       return;
@@ -248,9 +258,6 @@ function cellMarked(elCell) {
 }
 
 function showHint(iIdx, jIdx) {
-  if (gGame.isVictory || gGame.isOver) {
-    return;
-  }
   gGame.isHintOn = false;
   for (var i = iIdx - 1; i <= iIdx + 1; i++) {
     for (var j = jIdx - 1; j <= jIdx + 1; j++) {
@@ -429,14 +436,8 @@ function renderBoard() {
         cellMarked(e.target);
         showVirusesCount();
       };
-      var hoverHandler = function (e) {
-        if (gGame.isHintOn) {
-          e.target.style.cursor = 'url(img/hint-pointer.png), pointer';
-        }
-      };
       elCell.onclick = clickHandler;
       elCell.oncontextmenu = rightClickHandler;
-      elCell.onmouseover = hoverHandler;
       elBoard.appendChild(elCell);
     }
   }
@@ -476,10 +477,20 @@ function startOver() {
   startOverButton.classList.add('normal');
   var hintButtons = document.querySelectorAll('.hint');
   hintButtons.forEach(function (button) {
-    button.style.display = 'inline-block';
+    button.style.visibility = 'visible';
   });
 
   if (gViruses < 3) gLives = gViruses;
+  // var livesContainer = document.querySelector('.lives');
+  // var lifeStr = '<div class="live"></div>';
+  // livesContainer.innerHTML = lifeStr.repeat(gLives);
+  // showVirusesCount();
+  // stopTimer();
+  // var timer = document.querySelector('.timer');
+  // timer.innerText = '0';
+  // var findButton = document.querySelector('.find');
+  // findButton.innerText = '3';
+
   var livesContainer = document.querySelector('.lives');
   var lifeStr = '<div class="live"></div>';
   livesContainer.innerHTML = lifeStr.repeat(gLives);
@@ -515,9 +526,19 @@ function setLevel(button) {
 
 // eslint-disable-next-line no-unused-vars
 function getHint(elButton) {
-  if (!(gGame.isOn)) return;
-  elButton.style.display = 'none';
+  // if (!(gGame.isOn)) return;
+  elButton.disabled = false;
+  elButton.style.visibility = 'hidden';
   gGame.isHintOn = true;
+  var elCells = document.querySelectorAll('.cell');
+  elCells.forEach(function (cell) {
+    var hoverHandler = function (e) {
+      if (gGame.isHintOn) {
+        e.target.style.cursor = 'url(img/hint-pointer.png), pointer';
+      }
+    };
+    cell.onmouseover = hoverHandler;
+  });
 }
 
 // eslint-disable-next-line no-unused-vars
